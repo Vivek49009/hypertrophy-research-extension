@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const journals = [...new Set(studies.map(s => s.journal).filter(Boolean))]
         .sort();
 
-      // 🔹 Create filter UI
+      // 🔹 Filters
       const filters = document.createElement("div");
       filters.className = "filters";
 
@@ -54,6 +54,13 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
 
       container.appendChild(filters);
+
+      // 🔍 Search
+      const searchInput = document.createElement("input");
+      searchInput.type = "text";
+      searchInput.placeholder = "Search studies…";
+      searchInput.className = "search-input";
+      container.appendChild(searchInput);
 
       const list = document.createElement("div");
       container.appendChild(list);
@@ -120,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       function applyFilters() {
         const year = yearSelect.value;
         const journal = journalSelect.value;
+        const query = searchInput.value.toLowerCase();
 
         let filtered = studies;
 
@@ -131,11 +139,20 @@ document.addEventListener("DOMContentLoaded", () => {
           filtered = filtered.filter(s => s.journal === journal);
         }
 
+        if (query) {
+          filtered = filtered.filter(s =>
+            s.title.toLowerCase().includes(query) ||
+            s.abstract.toLowerCase().includes(query) ||
+            s.journal.toLowerCase().includes(query)
+          );
+        }
+
         render(filtered);
       }
 
       yearSelect.addEventListener("change", applyFilters);
       journalSelect.addEventListener("change", applyFilters);
+      searchInput.addEventListener("input", applyFilters);
 
       // Initial render
       render(studies);
