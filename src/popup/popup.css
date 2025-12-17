@@ -20,12 +20,6 @@ body {
   color: var(--text-primary);
 }
 
-.header {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 12px;
-}
-
 .study-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -70,4 +64,16 @@ details[open] summary {
   max-height: 180px;
   overflow-y: auto;
   padding-right: 4px;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  padding: 6px 0 10px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
 }
