@@ -1,26 +1,73 @@
+:root {
+  --bg: #ffffff;
+  --card-bg: #fafafa;
+  --border: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --accent: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: system-ui, sans-serif;
-  margin: 10px;
-  width: 360px;
+  margin: 0;
+  padding: 12px;
+  width: 380px;
+  background: var(--bg);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-primary);
+}
+
+.header {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
 }
 
 .study-card {
-  border-bottom: 1px solid #ddd;
-  padding: 8px 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
 }
 
-.study-card h3 {
+.study-title {
   font-size: 14px;
-  margin: 0 0 4px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-bottom: 6px;
 }
 
-.study-card p {
+.study-meta {
   font-size: 12px;
-  margin: 0 0 6px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
 }
 
 details summary {
   cursor: pointer;
   font-size: 12px;
-  color: #0077cc;
+  font-weight: 500;
+  color: var(--accent);
+  list-style: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] summary {
+  margin-bottom: 8px;
+}
+
+.study-abstract {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #374151;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 4px;
 }

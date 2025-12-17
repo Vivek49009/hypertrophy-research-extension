@@ -11,16 +11,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     container.innerHTML = "";
 
-    studies.forEach(study => {
+    studies.forEach((study) => {
       const card = document.createElement("div");
       card.className = "study-card";
 
       card.innerHTML = `
-        <h3>${study.title}</h3>
-        <p><strong>${study.journal}</strong> (${study.year})</p>
+        <a
+          class="study-title study-link"
+          href="https://pubmed.ncbi.nlm.nih.gov/${study.id}/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ${study.title}
+        </a>
+
+        <div class="study-meta">
+          ${study.journal} (${study.year})
+        </div>
+
         <details>
           <summary>Read abstract</summary>
-          <p>${study.abstract}</p>
+          <div class="study-abstract">
+            ${study.abstract}
+          </div>
         </details>
       `;
 
