@@ -1,15 +1,13 @@
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log("Hypertrophy Research background worker installed");
-
   const ids = await fetchPubMedIds();
-  console.log("Fetched PubMed IDs:", ids);
-
   const xmlData = await fetchPubMedDetails(ids);
-  console.log("Fetched PubMed XML length:", xmlData.length);
+
+  const studies = parsePubMedArticles(xmlData);
+
+  console.log("Parsed studies:", studies);
 
   chrome.storage.local.set({
-    pubmedIds: ids,
-    pubmedRawXml: xmlData
+    pubmedStudies: studies
   });
 });
 
@@ -43,4 +41,37 @@ async function fetchPubMedDetails(ids){
     const response = await fetch(`${baseUrl}?${params.toString()}`);
     const xmlText = await response.text();
     return xmlText;
+}
+
+function parsePubMedArticles(xml) {
+  const articles = [];
+  const articleBlocks = xml.match(/<PubmedArticle>[\s\S]*?<\/PubmedArticle>/g) || [];
+
+  articleBlocks.forEach(block => {
+    const get = (regex) => {
+      const match = block.match(regex);
+      return match ? match[1].trim() : "";
+    };
+
+    const id = get(/<PMID.*?>(.*?)<\/PMID>/);
+    const title = get(/<ArticleTitle>([\s\S]*?)<\/ArticleTitle>/);
+
+    const abstractMatches = [...block.matchAll(/<AbstractText.*?>([\s\S]*?)<\/AbstractText>/g)];
+    const abstract = abstractMatches.map(m => m[1].trim()).join("\n\n");
+
+    const journal = get(/<Journal>[\s\S]*?<Title>(.*?)<\/Title>/);
+    const year =
+      get(/<PubDate>[\s\S]*?<Year>(.*?)<\/Year>/) ||
+      get(/<PubDate>[\s\S]*?<MedlineDate>(.*?)<\/MedlineDate>/);
+
+    articles.push({
+      id,
+      title,
+      abstract,
+      journal,
+      year
+    });
+  });
+
+  return articles;
 }
