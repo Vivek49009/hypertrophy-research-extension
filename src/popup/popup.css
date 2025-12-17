@@ -77,3 +77,23 @@ details[open] summary {
   z-index: 10;
   border-bottom: 1px solid var(--border);
 }
+
+.study-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.bookmark-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #f59e0b;
+  padding: 0;
+}
+
+.bookmark-btn:hover {
+  transform: scale(1.1);
+}
