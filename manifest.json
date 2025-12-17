@@ -4,10 +4,10 @@
   "description": "A Chrome extension to collect and organise hypertrophy-related medical research.",
   "version": "0.1.0",
   "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "16": "assets/icons/papers.png",
+    "32": "assets/icons/papers.png",
+    "48": "assets/icons/papers.png",
+    "128": "assets/icons/papers.png"
   },
   "action": {
     "default_popup": "src/popup/popup.html"
