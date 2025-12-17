@@ -1,6 +1,23 @@
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("content");
+  const toggleBtn = document.getElementById("themeToggle");
 
+  // 🌙 Load saved theme preference
+  chrome.storage.local.get("darkMode", (res) => {
+    if (res.darkMode) {
+      document.body.classList.add("dark");
+      toggleBtn.textContent = "☀️";
+    }
+  });
+
+  // 🌙 Toggle dark mode
+  toggleBtn.addEventListener("click", () => {
+    const isDark = document.body.classList.toggle("dark");
+    toggleBtn.textContent = isDark ? "☀️" : "🌙";
+    chrome.storage.local.set({ darkMode: isDark });
+  });
+
+  // 📚 Load studies + bookmarks
   chrome.storage.local.get(
     ["pubmedStudies", "bookmarkedStudies"],
     (res) => {
@@ -13,8 +30,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // 🔹 Derive filter values
-      const years = [...new Set(studies.map(s => s.year).filter(Boolean))].sort().reverse();
-      const journals = [...new Set(studies.map(s => s.journal).filter(Boolean))].sort();
+      const years = [...new Set(studies.map(s => s.year).filter(Boolean))]
+        .sort()
+        .reverse();
+
+      const journals = [...new Set(studies.map(s => s.journal).filter(Boolean))]
+        .sort();
 
       // 🔹 Create filter UI
       const filters = document.createElement("div");
