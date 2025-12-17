@@ -12,62 +12,112 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      container.innerHTML = "";
+      // 🔹 Derive filter values
+      const years = [...new Set(studies.map(s => s.year).filter(Boolean))].sort().reverse();
+      const journals = [...new Set(studies.map(s => s.journal).filter(Boolean))].sort();
 
-      studies.forEach((study) => {
-        const card = document.createElement("div");
-        card.className = "study-card";
+      // 🔹 Create filter UI
+      const filters = document.createElement("div");
+      filters.className = "filters";
 
-        const isBookmarked = bookmarks.has(study.id);
+      filters.innerHTML = `
+        <select id="yearFilter">
+          <option value="">All Years</option>
+          ${years.map(y => `<option value="${y}">${y}</option>`).join("")}
+        </select>
 
-        card.innerHTML = `
-          <div class="study-header">
-            <a
-              class="study-title study-link"
-              href="https://pubmed.ncbi.nlm.nih.gov/${study.id}/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              ${study.title}
-            </a>
+        <select id="journalFilter">
+          <option value="">All Journals</option>
+          ${journals.map(j => `<option value="${j}">${j}</option>`).join("")}
+        </select>
+      `;
 
-            <button class="bookmark-btn">
-              ${isBookmarked ? "★" : "☆"}
-            </button>
-          </div>
+      container.appendChild(filters);
 
-          <div class="study-meta">
-            ${study.journal} (${study.year})
-          </div>
+      const list = document.createElement("div");
+      container.appendChild(list);
 
-          <details>
-            <summary>Read abstract</summary>
-            <div class="study-abstract">
-              ${study.abstract}
+      const yearSelect = filters.querySelector("#yearFilter");
+      const journalSelect = filters.querySelector("#journalFilter");
+
+      function render(filteredStudies) {
+        list.innerHTML = "";
+
+        filteredStudies.forEach((study) => {
+          const card = document.createElement("div");
+          card.className = "study-card";
+
+          const isBookmarked = bookmarks.has(study.id);
+
+          card.innerHTML = `
+            <div class="study-header">
+              <a
+                class="study-title study-link"
+                href="https://pubmed.ncbi.nlm.nih.gov/${study.id}/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ${study.title}
+              </a>
+
+              <button class="bookmark-btn">
+                ${isBookmarked ? "★" : "☆"}
+              </button>
             </div>
-          </details>
-        `;
 
-        const bookmarkBtn = card.querySelector(".bookmark-btn");
+            <div class="study-meta">
+              ${study.journal} (${study.year})
+            </div>
 
-        bookmarkBtn.addEventListener("click", () => {
-          if (bookmarks.has(study.id)) {
-            bookmarks.delete(study.id);
-          } else {
-            bookmarks.add(study.id);
-          }
+            <details>
+              <summary>Read abstract</summary>
+              <div class="study-abstract">
+                ${study.abstract}
+              </div>
+            </details>
+          `;
 
-          chrome.storage.local.set({
-            bookmarkedStudies: Array.from(bookmarks),
+          const bookmarkBtn = card.querySelector(".bookmark-btn");
+          bookmarkBtn.addEventListener("click", () => {
+            if (bookmarks.has(study.id)) {
+              bookmarks.delete(study.id);
+            } else {
+              bookmarks.add(study.id);
+            }
+
+            chrome.storage.local.set({
+              bookmarkedStudies: Array.from(bookmarks),
+            });
+
+            bookmarkBtn.textContent = bookmarks.has(study.id) ? "★" : "☆";
           });
 
-          bookmarkBtn.textContent = bookmarks.has(study.id)
-            ? "★"
-            : "☆";
+          list.appendChild(card);
         });
+      }
 
-        container.appendChild(card);
-      });
+      function applyFilters() {
+        const year = yearSelect.value;
+        const journal = journalSelect.value;
+
+        let filtered = studies;
+
+        if (year) {
+          filtered = filtered.filter(s => s.year === year);
+        }
+
+        if (journal) {
+          filtered = filtered.filter(s => s.journal === journal);
+        }
+
+        render(filtered);
+      }
+
+      yearSelect.addEventListener("change", applyFilters);
+      journalSelect.addEventListener("change", applyFilters);
+
+      // Initial render
+      render(studies);
     }
   );
 });
